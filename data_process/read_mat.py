@@ -9,12 +9,21 @@
 # Development Tool       ：PyCharm
 
 import scipy.io as sci_io
-import numpy as np
+
+
+def shanghai_crowd_points(mat_file_path):
+    """
+    :param mat_file_path: Mat file path
+    :return: Numpy.ndarray of points with shape of (n,2)
+    """
+    mat_info = sci_io.loadmat(mat_file_path)
+    crowd_points = mat_info.get('image_info')[0][0][0][0][0]
+    return crowd_points
+
 
 if __name__ == '__main__':
     data_path = 'GT_IMG_1.mat'
-    data = sci_io.loadmat(data_path)
-    data = data['image_info']
-    # data=np.array(data['image_info'])
-    points = data[0][0][0][0][0]
-    print(len(data[0][0][0][0][0]))
+    points = shanghai_crowd_points(data_path)
+    print(type(points[0]))
+    print(points[0][0])
+    print(len(points[0]))
