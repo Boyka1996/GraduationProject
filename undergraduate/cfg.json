@@ -1,0 +1,288 @@
+{
+  "person": {
+    "name": "person",
+    "status": "True",
+    "url": "http://0.0.0.0:5001/detector",
+    "port": 5001,
+    "author": "",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/home/chase/projects/models/person/e2e_keypoint_rcnn_X-101-32x8d-FPN_1x.yaml",
+      "wts_path": "/home/chase/projects/models/person/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": []
+    }
+  },
+  "hat": {
+    "name": "hat",
+    "status": "True",
+    "url": "http://0.0.0.0:5002/detector",
+    "port": 5002,
+    "author": "Zhao Hongwei",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/home/chase/project/models/hat/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/home/chase/project/models/hat/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "red_hat",
+        "yellow_hat",
+        "blue_hat",
+        "blue_hat",
+        "black_hat",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    }
+  },
+  "hat_belt": {
+    "name": "hat_belt",
+    "status": "True",
+    "url": "http://0.0.0.0:5003/detector",
+    "port": 5003,
+    "author": "Zhao Hongwei",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/home/chase/project/models/hat_belt/e2e_mask_rcnn_R-101-FPN_2x_detail_person.yaml",
+      "wts_path": "/home/chase/project/models/hat_belt/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "xidai",
+        "ear",
+        "bluehat",
+        "yellowhat",
+        "whitehat",
+        "redhat"
+      ]
+    }
+  },
+  "belt": {
+    "name": "belt",
+    "status": "False",
+    "url": "http://0.0.0.0:5004/detector",
+    "port": 5004,
+    "author": "Song Yongkang",
+    "description": "Need to merge to hat.",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/belt/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/belt/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "redhat",
+        "yellowhat",
+        "greenhat",
+        "bluehat",
+        "whitehat",
+        "red",
+        "yellow",
+        "orange",
+        "blue",
+        "green",
+        "lightgreen",
+        "belt"
+      ]
+    }
+  },
+  "insulating_bottle": {
+    "name": "insulating_bottle",
+    "status": "False",
+    "url": "http://0.0.0.0:5005/detector",
+    "port": 5005,
+    "author": "Fang Kai",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/insulating_bottle/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/insulating_bottle/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 1,
+      "classes": [
+        "background",
+        "porcelain"
+      ]
+    }
+  },
+  "belt_at_insulating_bottle": {
+    "name": "belt_at_insulating_bottle",
+    "status": "False",
+    "url": "http://0.0.0.0:5006/detector",
+    "port": 5006,
+    "author": "Fang Kai",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/belt_at_insulating_bottle/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/belt_at_insulating_bottle/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 1,
+      "classes": [
+        "background",
+        "porcelain_belt",
+        "porcelain_belt"
+      ]
+    }
+  },
+  "belt_at_ankle": {
+    "name": "belt_at_ankle",
+    "status": "False",
+    "url": "http://0.0.0.0:5007/detector",
+    "port": 5007,
+    "author": "Feng Zhizhen",
+    "description": "",
+    "update_date": "2020.03.26",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/belt_at_ankle/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/belt_at_ankle/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 1,
+      "classes": [
+        "background",
+        "belt"
+      ]
+    }
+  },
+  "fence": {
+    "name": "fence",
+    "status": "True",
+    "url": "http://0.0.0.0:5008/detector",
+    "port": 5008,
+    "author": "Wang Zhipeng",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/home/chase/project/models/fence/e2e_faster_rcnn_R-101-FPN_1x.yaml",
+      "wts_path": "/home/chase/project/models/fence/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 1,
+      "classes": [
+        "background",
+        "fence",
+        "fence"
+      ]
+    }
+  },
+  "multi_fence": {
+    "name": "multi_fence",
+    "status": "False",
+    "url": "http://0.0.0.0:5009/detector",
+    "port": 5009,
+    "author": "Feng Zhizhen",
+    "description": "",
+    "update_date": "2020.03.26",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/multi_fence/e2e_mask_rcnn_R-101-FPN_1x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/multi_fence/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "hengtiao",
+        "lingxing",
+        "qizi",
+        "wangzhuang",
+        "zhalan"
+      ]
+    }
+  },
+  "crane": {
+    "name": "crane",
+    "status": "False",
+    "url": "http://0.0.0.0:5010/detector",
+    "port": 5010,
+    "author": "Yu Fa",
+    "description": "",
+    "update_date": "2020.03.25",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/crane/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/crane/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "crane",
+        "lifting_arm"
+      ]
+    }
+  },
+  "sign": {
+    "name": "sign",
+    "status": "False",
+    "url": "http://0.0.0.0:5011/detector",
+    "port": 5011,
+    "author": "Song Yongkang",
+    "description": "",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/sign/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/sign/model_final.pkl",
+      "threshold": 0.6,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "sign",
+        "sign"
+      ]
+    }
+  },
+  "fire": {
+    "name": "fire",
+    "status": "False",
+    "url": "http://0.0.0.0:5012/detector",
+    "port": 5012,
+    "author": "Yu Fa",
+    "description": "",
+    "update_date": "2020.03.25",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/fire/e2e_mask_rcnn_R-101-FPN_2x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/fire/model_final.pkl",
+      "threshold": 0.8,
+      "gpu_id": 0,
+      "classes": [
+        "background",
+        "dianhan",
+        "huoyanqiege",
+        "shalunqiege"
+      ]
+    }
+  },
+  "ladder": {
+    "name": "ladder",
+    "status": "False",
+    "url": "http://0.0.0.0:5013/detector",
+    "port": 5013,
+    "author": "Wang Zhipeng",
+    "description": "Trained by Yu Fa initially.",
+    "update_date": "2020.01.01",
+    "cfg": {
+      "cfg_path": "/root/mnt/storage/default-storage/models/ladder/e2e_mask_rcnn_R-101-FPN_1x.yaml",
+      "wts_path": "/root/mnt/storage/default-storage/models/ladder/model_final.pkl",
+      "threshold": 0.95,
+      "gpu_id": 1,
+      "classes": [
+        "background",
+        "ladder"
+      ]
+    }
+  }
+}
