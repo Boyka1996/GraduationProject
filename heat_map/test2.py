@@ -60,9 +60,9 @@ def create_density(gts, d_map_h, d_map_w):
 
 
 if __name__ == '__main__':
-    train_img = 'D:/graduation_project/ShanghaiTech/part_A_final/train_data/images'
-    train_gt = 'D:/graduation_project/ShanghaiTech/part_A_final/train_data/ground_truth'
-    out_path = 'D:/graduation_project/ShanghaiTech/true_crowd_counting/'
+    train_img = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/images'
+    train_gt = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/ground_truth'
+    out_path = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/1/'
     validation_num = 15
 
     img_names = os.listdir(train_img)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
                     final_image = np.tile(final_image, [1, 1, 3])
                 image_final_name = out_path + mode + '_img/' 'IMG_' + str(i) + '_' + str(count) + '.jpg'
                 gt_final_name = out_path + mode + '_gt/' + 'GT_IMG_' + str(i) + '_' + str(count)
-                Image.fromarray(final_image).convert('RGB').save(image_final_name)
+                # Image.fromarray(final_image).convert('RGB').save(image_final_name)
                 # np.save(gt_final_name, final_gt)
                 count = count + 1
             py = py + p_h

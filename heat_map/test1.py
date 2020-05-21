@@ -18,7 +18,7 @@ from tqdm import tqdm
 from matplotlib import pyplot as plt
 from sortedcontainers import SortedDict
 from scipy.ndimage.filters import gaussian_filter
-
+from scipy import  spatial
 
 def get_img_pathes(path_sets):
     """
@@ -170,10 +170,10 @@ if __name__ == '__main__':
 
     # for full_img_path in tqdm(img_pathes):
     # full_img_path = '/mnt/publicStoreA/ndscai/downloads/201905/C-3-Framework-master/test/IMG_1.jpg'
-    full_img_path = 'D:/graduation_project/ShanghaiTech/part_A_final/train_data/images/IMG_1.jpg'
+    full_img_path = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/images/IMG_3.jpg'
     # data_folder, img_path = full_img_path.split('images')
     # mat_path = full_img_path.replace('.jpg', '.mat').replace('IMG_', 'GT_IMG_')
-    mat_path = 'D:/graduation_project/ShanghaiTech/part_A_final/train_data/ground_truth/GT_IMG_1.mat'
+    mat_path = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/ground_truth/GT_IMG_3.mat'
 
     # load img and map
     img = Image.open(full_img_path)
@@ -190,8 +190,8 @@ if __name__ == '__main__':
     density_map = gaussian_filter_density(
         gt_points, height, width, distances, kernels_dict, min_sigma=min_sigma, method=method, const_sigma=const_sigma)
 
-    save_computed_density(
-        density_map, '/mnt/publicStoreA/ndscai/downloads/201905/C-3-Framework-master/test/1.h5')
+    # save_computed_density(
+    #     density_map, '/mnt/publicStoreA/ndscai/downloads/201905/C-3-Framework-master/test/1.h5')
 
     plt.imshow(img)
     plt.imshow(density_map, alpha=0.75)

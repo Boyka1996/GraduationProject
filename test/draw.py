@@ -13,8 +13,8 @@ import matplotlib.image as mpimg  # mpimg 用于读取图片
 import matplotlib.pyplot as plt  # plt 用于显示图片
 import numpy as np
 
-image = mpimg.imread('/home/chase/datasets/crowd_counting/UCF_CC_50/images/10.jpg')  # 读取和代码处于同一目录下的 lena.png
-json_file = '/home/chase/datasets/crowd_counting/UCF_CC_50/json/10.json'
+image = mpimg.imread('/home/chase/datasets/crowd_counting/NWPU/images/0001.jpg')  # 读取和代码处于同一目录下的 lena.png
+json_file = '/home/chase/datasets/crowd_counting/NWPU/json/0001.json'
 print(image.shape)  # (512, 512, 3)
 with open(json_file, 'r') as fr:
     data = json.load(fr)
@@ -25,8 +25,8 @@ plt.imshow(image)  # 显示图片
 plt.axis('off')  # 不显示坐标轴
 plt.scatter(points[:, 0], points[:, 1], color=(1, 0, 0), s=3)
 plt.show()
-import cv2
-
-img = cv2.imread('/home/chase/datasets/crowd_counting/UCF_CC_50/images/10.jpg')
-cv2.imshow('img', img)
-cv2.waitKey(0)
+# import cv2
+#
+# img = cv2.imread('/home/chase/datasets/crowd_counting/UCF_CC_50/images/10.jpg')
+# cv2.imshow('img', img)
+# cv2.waitKey(0)
