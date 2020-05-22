@@ -37,6 +37,7 @@ def gaussian_filter_density(gt):
 
 
 def create_density(gts, d_map_h, d_map_w):
+    print(gts)
     res = np.zeros(shape=[d_map_h, d_map_w])
     bool_res = (gts[:, 0] < d_map_w) & (gts[:, 1] < d_map_h)
     for k in range(len(gts)):
