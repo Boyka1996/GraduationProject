@@ -25,8 +25,3 @@ plt.imshow(image)  # 显示图片
 plt.axis('off')  # 不显示坐标轴
 plt.scatter(points[:, 0], points[:, 1], color=(1, 0, 0), s=3)
 plt.show()
-# import cv2
-#
-# img = cv2.imread('/home/chase/datasets/crowd_counting/UCF_CC_50/images/10.jpg')
-# cv2.imshow('img', img)
-# cv2.waitKey(0)

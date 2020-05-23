@@ -23,7 +23,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Test/images',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/images',
         # default=None,
         type=str
     )
@@ -31,7 +31,7 @@ def parse_args():
         '--mat_path',
         dest='mat_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Test/mat',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/annotaion',
         # default=None,
         type=str
     )
@@ -39,14 +39,14 @@ def parse_args():
         '--save_path',
         dest='save_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Test/json',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/json',
         # default=None,
         type=str
     )
     return parser.parse_args()
 
 
-def ucf_cc_50_crowd_points(mat_file_path):
+def ucf_qnrf_crowd_points(mat_file_path):
     """
     :param mat_file_path: Mat file path
     :return: Numpy.ndarray of points
@@ -56,7 +56,7 @@ def ucf_cc_50_crowd_points(mat_file_path):
     return crowd_points.tolist()
 
 
-def ucf_cc_50_annotation_convert(args):
+def ucf_qnrf_annotation_convert(args):
     """
 
     :param args:
@@ -67,8 +67,8 @@ def ucf_cc_50_annotation_convert(args):
     for image in os.listdir(args.image_path):
         mat_file = os.path.join(args.mat_path, image.replace('.jpg', '_ann.mat'))
         if os.path.exists(mat_file):
-            points = ucf_cc_50_crowd_points(mat_file)
-            citation = "H. Idrees, M. Tayyab, K. Athrey, D. Zhang, S. Al-Maddeed, N. Rajpoot, M. Shah, Composition Loss for Counting, Density Map Estimation and Localization in Dense Crowds, in Proceedings of IEEE European Conference on Computer Vision (ECCV 2018), Munich, Germany, September 8-14, 2018."
+            points = ucf_qnrf_crowd_points(mat_file)
+            citation = "IDREES, Haroon, et al. Multi-source multi-scale counting in extremely dense crowd images. In: Proceedings of the IEEE conference on computer vision and pattern recognition. 2013. p. 2547-2554."
             info = {"image": image, "number": len(points), "points": points, "citation": citation}
             logger.info(image + " ————> " + str(len(points)))
             with open(os.path.join(args.save_path, image.replace('.jpg', '.json')), 'w') as fw:
@@ -76,5 +76,5 @@ def ucf_cc_50_annotation_convert(args):
 
 
 if __name__ == '__main__':
-    ucf_cc_50_args = parse_args()
-    ucf_cc_50_annotation_convert(ucf_cc_50_args)
+    ucf_qnrf_args = parse_args()
+    ucf_qnrf_annotation_convert(ucf_qnrf_args)
