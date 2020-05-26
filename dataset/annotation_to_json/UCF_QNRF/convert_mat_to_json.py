@@ -23,7 +23,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF_CC_50/images',
+        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/images',
         # default=None,
         type=str
     )
@@ -31,7 +31,7 @@ def parse_args():
         '--mat_path',
         dest='mat_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF_CC_50/annotaion',
+        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/annotaion',
         # default=None,
         type=str
     )
@@ -39,7 +39,7 @@ def parse_args():
         '--save_path',
         dest='save_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF_CC_50/json',
+        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/json',
         # default=None,
         type=str
     )
