@@ -6,53 +6,20 @@
 # @File    : test2_backup.py
 # @Software: PyCharm
 
-import argparse
-import json
 import logging
-import math
-import os
 
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
 import numpy as np
+import os
+import matplotlib.image as mpimg
 import scipy.io as sio
-from PIL import Image
 from scipy.ndimage import filters
 from sklearn.neighbors import NearestNeighbors
+from PIL import Image
+import math
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Path configuration")
-    parser.add_argument(
-        '--image_path',
-        dest='image_path',
-        help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/images',
-        # default=None,
-        type=str
-    )
-
-    parser.add_argument(
-        '--json_path',
-        dest='json_path',
-        help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/json',
-        # default=None,
-        type=str
-    )
-    parser.add_argument(
-        '--npy_path',
-        dest='npy_path',
-        help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/npy',
-        # default=None,
-        type=str
-    )
-    return parser.parse_args()
-
 
 def gaussian_filter_density(gt):
     pts = np.array(list(zip(np.nonzero(gt)[1], np.nonzero(gt)[0])))
@@ -76,12 +43,11 @@ def gaussian_filter_density(gt):
 
 
 def create_density(gts, d_map_h, d_map_w):
-    print(gts)
     res = np.zeros(shape=[d_map_h, d_map_w])
     bool_res = (gts[:, 0] < d_map_w) & (gts[:, 1] < d_map_h)
     for k in range(len(gts)):
         gt = gts[k]
-        if bool_res[k]:
+        if (bool_res[k] == True):
             res[int(gt[1])][int(gt[0])] = 1
     pts = np.array(list(zip(np.nonzero(res)[1], np.nonzero(res)[0])))
     neighbors = NearestNeighbors(n_neighbors=4, algorithm='kd_tree', leaf_size=1200)
@@ -99,19 +65,7 @@ def create_density(gts, d_map_h, d_map_w):
     return density
 
 
-def get_file_list(file_path):
-    return zip(os.listdir(file_path), [os.path.join(file_path, file) for file in os.listdir(file_path)])
-
-
 if __name__ == '__main__':
-    data_args = parse_args()
-    for image_name, image_path in get_file_list(data_args.image_path):
-        pil_img = Image.open(image_path)
-        width, height = pil_img.size
-        json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
-        with open(json_path, 'r') as fr:
-            points = json.load(open(json_path)).get('points')
-        logger.info(len(points))
     train_img = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/images'
     train_gt = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/ground_truth'
     out_path = '/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/1/'
@@ -142,6 +96,7 @@ if __name__ == '__main__':
         # den_map = gaussian_filter_density(res)
         if (global_step == 4):
             print(1)
+        print(type(gts))
         den_map = create_density(gts / 4, d_map_h, d_map_w)
         # endtime = datetime.datetime.now()
         # interval = (endtime - starttime).seconds
@@ -151,37 +106,37 @@ if __name__ == '__main__':
         p_w = math.floor(float(img.shape[1]) / 3.0)
         d_map_ph = math.floor(math.floor(p_h / 2.0) / 2.0)
         d_map_pw = math.floor(math.floor(p_w / 2.0) / 2.0)
-
-        if (global_step < validation_num):
-            mode = 'val'
-        else:
-            mode = 'train'
-        py = 1
-        py2 = 1
-        for j in range(1, 4):
-            px = 1
-            px2 = 1
-            for k in range(1, 4):
-                print('global' + str(global_step))
-                # print('j' + str(j))
-                # print('k' +str(k))
-                print('----------')
-                if (global_step == 4 & j == 3 & k == 4):
-                    print('global' + str(global_step))
-                final_image = img[py - 1: py + p_h - 1, px - 1: px + p_w - 1, :]
-                final_gt = den_map[py2 - 1: py2 + d_map_ph - 1, px2 - 1: px2 + d_map_pw - 1]
-                px = px + p_w
-                px2 = px2 + d_map_pw
-                if final_image.shape[2] < 3:
-                    final_image = np.tile(final_image, [1, 1, 3])
-                image_final_name = out_path + mode + '_img/' 'IMG_' + str(i) + '_' + str(count) + '.jpg'
-                gt_final_name = out_path + mode + '_gt/' + 'GT_IMG_' + str(i) + '_' + str(count)
-                Image.fromarray(final_image).convert('RGB').save(image_final_name)
-                np.save(gt_final_name, final_gt)
-                count = count + 1
-            py = py + p_h
-            py2 = py2 + d_map_ph
-        global_step = global_step + 1
-        fig2 = plt.figure('fig2')
-        plt.imshow(den_map)
-        plt.show()
+        #
+        # if (global_step < validation_num):
+        #     mode = 'val'
+        # else:
+        #     mode = 'train'
+        # py = 1
+        # py2 = 1
+        # for j in range(1, 4):
+        #     px = 1
+        #     px2 = 1
+        #     for k in range(1, 4):
+        #         print('global' + str(global_step))
+        #         # print('j' + str(j))
+        #         # print('k' +str(k))
+        #         print('----------')
+        #         if (global_step == 4 & j == 3 & k == 4):
+        #             print('global' + str(global_step))
+        #         final_image = img[py - 1: py + p_h - 1, px - 1: px + p_w - 1, :]
+        #         final_gt = den_map[py2 - 1: py2 + d_map_ph - 1, px2 - 1: px2 + d_map_pw - 1]
+        #         px = px + p_w
+        #         px2 = px2 + d_map_pw
+        #         if final_image.shape[2] < 3:
+        #             final_image = np.tile(final_image, [1, 1, 3])
+        #         image_final_name = out_path + mode + '_img/' 'IMG_' + str(i) + '_' + str(count) + '.jpg'
+        #         gt_final_name = out_path + mode + '_gt/' + 'GT_IMG_' + str(i) + '_' + str(count)
+        #         Image.fromarray(final_image).convert('RGB').save(image_final_name)
+        #         np.save(gt_final_name, final_gt)
+        #         count = count + 1
+        #     py = py + p_h
+        #     py2 = py2 + d_map_ph
+        # global_step = global_step + 1
+        # fig2 = plt.figure('fig2')
+        # plt.imshow(den_map)
+        # plt.show()

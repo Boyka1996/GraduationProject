@@ -13,6 +13,7 @@ import argparse
 import json
 import logging
 import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -112,7 +113,7 @@ if __name__ == '__main__':
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         with open(json_path, 'r') as fr:
             points = json.load(open(json_path)).get('points')
-        logger.info(len(points))
+        points = np.array(points)
         if max(width, height) > scale:
             if width == max(width, height):
                 nw, nh = scale, round(height * scale / width / mod) * mod
@@ -121,7 +122,6 @@ if __name__ == '__main__':
         else:
             nw, nh = round((width / mod)) * mod, round((height / mod)) * mod
         pil_img.resize((nw, nh), Image.BILINEAR)
-        logger.info(points)
         #
         # if len(points) > 0:
         #     points[:, 0] = points[:, 0].clip(0, width - 1)

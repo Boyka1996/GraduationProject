@@ -1,18 +1,17 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/5/22 下午2:21
+# @Time    : 2020/5/26 上午11:09
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
-# @File    : test2_backup.py
+# @File    : knn_sigma_heat_map.py
 # @Software: PyCharm
+
 
 import argparse
 import json
 import logging
+import math
 import os
-import time
-import cv2
-
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -54,7 +53,6 @@ def parse_args():
 
 
 def create_density(gts, d_map_h, d_map_w):
-    start_time = time.time()
     res = np.zeros(shape=[d_map_h, d_map_w])
     bool_res = (gts[:, 0] < d_map_w) & (gts[:, 1] < d_map_h)
     for k in range(len(gts)):
@@ -72,23 +70,7 @@ def create_density(gts, d_map_h, d_map_w):
         pt = pts[i]
         pt2d = np.zeros(shape=map_shape, dtype=np.float32)
         pt2d[pt[1]][pt[0]] = 1
-        radius = 40 * sigmas[i]
-        xmin = int(max(0, pt[0] - radius))
-        xmax = int(min(pt[0] + radius, d_map_w))
-        ymin = int(max(0, pt[1] - radius))
-        ymax = int(min(pt[1] + radius, d_map_h))
-        # print(xmin)
-        # print(xmax)q
-        # print(ymin)
-        # print(ymax)
-        # print(pt2d[xmin:xmax, ymin:ymax].shape)
-        # one_map = cv2.GaussianBlur(pt2d, ksize=(9, 9), sigmaX=0, sigmaY=0)
-        one_map = filters.gaussian_filter(pt2d[xmin:xmax, ymin:ymax], sigmas[i], mode='constant')
-        density[xmin:xmax, ymin:ymax] += one_map
-    logger.info("***********************************")
-    logger.info(time.time() - start_time)
-    logger.info(np.sum(density))
-    logger.info("***********************************")
+        density += filters.gaussian_filter(pt2d, sigmas[i], mode='constant')
     plt.imshow(density)
     plt.show()
     return density
@@ -104,7 +86,6 @@ if __name__ == '__main__':
         logger.info(image_name)
         pil_img = Image.open(image_path)
         shape = pil_img.size
-        print(shape)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         with open(json_path, 'r') as fr:
             points = json.load(open(json_path)).get('points')
