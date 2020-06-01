@@ -12,14 +12,15 @@ import logging
 import math
 import os
 import time
-import scipy
+
 import cv2
-import numpy as np
-from sklearn import neighbors
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+from sklearn import neighbors
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 
 def parse_args():
@@ -75,7 +76,6 @@ def create_density(points, density_map_rows, density_map_cols):
     # points = points[:, [1, 0]]
     start_time = time.time()
 
-
     # tree = scipy.spatial.KDTree(
     #     points.copy(), leafsize=1024)  # build kdtree
     # distances, _ = tree.query(
@@ -95,8 +95,8 @@ def create_density(points, density_map_rows, density_map_cols):
         # sigmas[i] = int(sigmas[i])
         sigma = sigmas[i].astype(np.int16)
         # Scale adaptive Gaussian kernel
-        if sigma==0:
-            near=neighborhood_id[i]
+        if sigma == 0:
+            near = neighborhood_id[i]
             for fk_id in near:
                 print(points[fk_id])
         if sigma % 2 == 0:
@@ -143,6 +143,7 @@ if __name__ == '__main__':
 
         logger.info(image_name)
         # cv_img = Image.open(image_path)
+        pil_img=Image.open(image_path)
         cv_img = cv2.imread(image_path)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         if not os.path.exists(json_path):
@@ -157,12 +158,13 @@ if __name__ == '__main__':
         # if image_name == '1015.jpg':
         #     json_points = json_points[:, [1, 0]]
         # Because the coordinates of '1015.jpg' in NWPU data set is transposed
+        print(np.array(pil_img).shape)
+        print(type(pil_img))
         print(cv_img.shape)
         print(len(json_points))
         density_map = create_density(json_points, cv_img.shape[0], cv_img.shape[1])
 
         np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
-
 
         # plt.imshow(show_img)
         # plt.show()
