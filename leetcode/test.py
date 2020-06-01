@@ -3,7 +3,7 @@
 # @Time    : 2020/4/20 上午12:35
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
-# @File    : test.py
+# @File    :
 # @Software: PyCharm
 
 def str2int(s):

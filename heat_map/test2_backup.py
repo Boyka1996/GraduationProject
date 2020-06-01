@@ -29,7 +29,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/images',
+        default='/home/chase/datasets/crowd_counting/mall/frames',
         # default=None,
         type=str
     )
@@ -38,7 +38,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/json',
+        default='/home/chase/datasets/crowd_counting/mall/json',
         # default=None,
         type=str
     )
@@ -46,7 +46,15 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/npy',
+        default='/home/chase/datasets/crowd_counting/mall/npy_kernel_size_5_sigma',
+        # default=None,
+        type=str
+    ),
+    parser.add_argument(
+        '--data_set_info',
+        dest='data_set_info',
+        help='',
+        default='/home/chase/datasets/crowd_counting/mall/mall_info.json',
         # default=None,
         type=str
     )
@@ -72,7 +80,7 @@ def create_density(gts, d_map_h, d_map_w):
         pt = pts[i]
         pt2d = np.zeros(shape=map_shape, dtype=np.float32)
         pt2d[pt[1]][pt[0]] = 1
-        radius = 40 * sigmas[i]
+        radius = 5 * sigmas[i]
         xmin = int(max(0, pt[0] - radius))
         xmax = int(min(pt[0] + radius, d_map_w))
         ymin = int(max(0, pt[1] - radius))

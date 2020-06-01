@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/5/26 上午11:24
+# @Time    : 2020/5/28 下午3:11
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
-# @File    : my_heat_map.py
+# @File    : shanghai.py
 # @Software: PyCharm
 
 import argparse
@@ -12,14 +12,14 @@ import logging
 import math
 import os
 import time
-import scipy
+
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import neighbors
-import matplotlib.pyplot as plt
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 
 def parse_args():
@@ -28,7 +28,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/images',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/images',
         # default=None,
         type=str
     )
@@ -37,7 +37,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/json',
         # default=None,
         type=str
     )
@@ -45,19 +45,18 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/npy',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/npy',
         # default=None,
         type=str
-    ),
+    )
     parser.add_argument(
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/UCF-QNRF_ECCV18/Train/qurf_train_info.json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/shanghai_tech_a_train_info.json',
         # default=None,
         type=str
     )
-
     return parser.parse_args()
 
 
@@ -72,20 +71,11 @@ def create_density(points, density_map_rows, density_map_cols):
     density = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
     # if len(points) < 5:
     #     return density
-    # points = points[:, [1, 0]]
+    points = points[:, [1, 0]]
     start_time = time.time()
-
-
-    # tree = scipy.spatial.KDTree(
-    #     points.copy(), leafsize=1024)  # build kdtree
-    # distances, _ = tree.query(
-    #     points, k=4)  # query kdtree
-    neighborhoods = neighbors.NearestNeighbors(n_neighbors=4, algorithm='kd_tree', leaf_size=1200)
+    neighborhoods = neighbors.NearestNeighbors(n_neighbors=5, algorithm='kd_tree', leaf_size=10000)
     neighborhoods.fit(points.copy())
-    distances, neighborhood_id = neighborhoods.kneighbors()
-    # neighbors = NearestNeighbors(n_neighbors=5, algorithm='kd_tree', leaf_size=10000)
-    # neighbors.fit(points.copy())
-    # distances, _ = neighbors.kneighbors()
+    distances, _ = neighborhoods.kneighbors()
 
     sigmas = distances.sum(axis=1) * 0.075
     for i in range(len(points)):
@@ -95,15 +85,10 @@ def create_density(points, density_map_rows, density_map_cols):
         # sigmas[i] = int(sigmas[i])
         sigma = sigmas[i].astype(np.int16)
         # Scale adaptive Gaussian kernel
-        if sigma==0:
-            near=neighborhood_id[i]
-            for fk_id in near:
-                print(points[fk_id])
         if sigma % 2 == 0:
-            sigma += 1
+            sigma -= 1
         # radius = 100 * sigma
         radius = 5 * sigma
-        # print(sigma)
         row_min = max(0, point[0] - radius)
         row_max = min(point[0] + radius, density_map_rows)
         col_min = max(0, point[1] - radius)
@@ -115,8 +100,7 @@ def create_density(points, density_map_rows, density_map_cols):
     logger.info(time.time() - start_time)
     logger.info(len(points))
     logger.info(np.sum(density))
-    # plt.imshow(density)
-    plt.show()
+
     logger.info("***********************************")
     return density
 
@@ -147,24 +131,26 @@ if __name__ == '__main__':
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         if not os.path.exists(json_path):
             continue
-        # if not image_name=='img_0315.jpg':
-        #     continue
         with open(json_path, 'r') as fr:
             json_points = json.load(open(json_path)).get('points')
-        json_points = np.array(json_points, dtype=np.int)[:, [1, 0]]
-        json_points[:, 0] = json_points[:, 0].clip(0, cv_img.shape[0] - 1)
-        json_points[:, 1] = json_points[:, 1].clip(0, cv_img.shape[1] - 1)
-        # if image_name == '1015.jpg':
-        #     json_points = json_points[:, [1, 0]]
+        json_points = np.array(json_points, dtype=np.int)
+        if image_name == '1015.jpg':
+            json_points = json_points[:, [1, 0]]
         # Because the coordinates of '1015.jpg' in NWPU data set is transposed
         print(cv_img.shape)
-        print(len(json_points))
         density_map = create_density(json_points, cv_img.shape[0], cv_img.shape[1])
 
-        np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
+        # np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
 
-
-        # plt.imshow(show_img)
+        # show_img = cv2.cvtColor(density_map*255, cv2.COLOR_GRAY2RGB)
+        # print(show_img.shape)
+        # dst = cv2.addWeighted(cv_img, 0.9, show_img, 0.1,0)
+        # for i in range(len(cv_img)):
+        #     for j in range(len(cv_img[i])):
+        #         cv_img[i][j] = cv_img[i][j] * density_map[i][j]*(1/max(density_map))
+        # cv2.imshow('1', cv_img)
+        # cv2.waitKey()
+        # # plt.imshow(show_img)
         # plt.show()
 
         detailed_person_num = float(np.sum(density_map))
@@ -178,18 +164,18 @@ if __name__ == '__main__':
         detailed_density_map_person_num_error[image_name.replace('.jpg', '')] = math.fabs(
             detailed_person_num - len(json_points))
 
-    total_error = int(np.sum(list(density_map_person_num_error.values())))
-    total_detailed_error = float(np.sum(list(detailed_density_map_person_num_error.values())))
+        total_error = int(np.sum(list(density_map_person_num_error.values())))
+        total_detailed_error = float(np.sum(list(detailed_density_map_person_num_error.values())))
 
-    print(total_error)
-    print(total_error / len(density_map_person_num_error.values()))
-    print(total_detailed_error)
-    print(total_detailed_error / len(density_map_person_num_error.values()))
+        print(total_error)
+        print(total_error / len(density_map_person_num_error.values()))
+        print(total_detailed_error)
+        print(total_detailed_error / len(density_map_person_num_error.values()))
 
-    data_set_info['total_error'] = total_error
-    data_set_info['total_detailed_error'] = total_detailed_error
-    data_set_info['mean_error'] = total_error / len(density_map_person_num_error.values())
-    data_set_info['mean_detailed_error'] = total_detailed_error / len(density_map_person_num_error.values())
+        data_set_info['total_error'] = total_error
+        data_set_info['total_detailed_error'] = total_detailed_error
+        data_set_info['mean_error'] = total_error / len(density_map_person_num_error.values())
+        data_set_info['mean_detailed_error'] = total_detailed_error / len(density_map_person_num_error.values())
 
-    with open('mall_info.json', 'w') as fw:
-        json.dump(data_set_info, fw)
+        with open('mall_info.json', 'w') as fw:
+            json.dump(data_set_info, fw)
