@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
         logger.info(image_name)
         # cv_img = Image.open(image_path)
-        pil_img=Image.open(image_path)
+        pil_img = Image.open(image_path).convert("RGB")
         cv_img = cv2.imread(image_path)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         if not os.path.exists(json_path):
@@ -162,6 +162,10 @@ if __name__ == '__main__':
         print(type(pil_img))
         print(cv_img.shape)
         print(len(json_points))
+        plt.imshow(cv_img[:, :, 0])
+        # plt.imshow(cv_img[:, :, 1])
+        # plt.imshow(cv_img[:, :, 2])
+        plt.show()
         density_map = create_density(json_points, cv_img.shape[0], cv_img.shape[1])
 
         np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
