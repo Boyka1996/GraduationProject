@@ -3,7 +3,7 @@
 # @Time    : 2020/6/1 下午8:11
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
-# @File    : model.py
+# @File    : mcnn_model.py
 # @Software: PyCharm
 import torch
 import torch.nn as nn
