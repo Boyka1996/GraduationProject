@@ -10,22 +10,35 @@ import os
 import torch
 import torch.nn as nn
 import torchvision
-import torchvision.transforms as transform
 from torch import optim
 from torchvision.transforms import transforms
+from dataset import ShanghaiTechA
+from mcnn_model import MCNNModel
 
-from .mcnn_model import MCNNModel
+# from mcnn import MCNNModel
+#
+# from dataset import ShanghaiTechA
+# from . import dataset,mcnn_model
+# from mcnn_model import mcnn_model
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-train_loader = torch.utils.data.DataLoader(train_set, batch_size=4, shuffle=True, num_workers=4)
 
-test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-test_loader = torch.utils.data.DataLoader(test_set, batch_size=4, shuffle=True, num_workers=4)
 transform = transforms.Compose([
+    transforms.RandomCrop(300),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
+# transform = transforms.Compose([
+#     transforms.Resize(256),
+#     transforms.CenterCrop(224),
+#     transforms.ToTensor()
+# ])
+
+train_set = ShanghaiTechA('/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/', transform)
+train_loader = torch.utils.data.DataLoader(train_set, batch_size=4, shuffle=True, num_workers=4)
+
+test_set = ShanghaiTechA('/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/', transform)
+test_loader = torch.utils.data.DataLoader(test_set, batch_size=4, shuffle=True, num_workers=4)
 '''train model'''
 
 

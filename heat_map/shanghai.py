@@ -28,7 +28,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/images',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/images',
         # default=None,
         type=str
     )
@@ -37,7 +37,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/json',
         # default=None,
         type=str
     )
@@ -45,7 +45,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/npy',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/npy',
         # default=None,
         type=str
     )
@@ -53,7 +53,7 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/shanghai_tech_a_train_info.json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/shanghai_tech_a_test_info.json',
         # default=None,
         type=str
     )
@@ -71,7 +71,7 @@ def create_density(points, density_map_rows, density_map_cols):
     density = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
     # if len(points) < 5:
     #     return density
-    points = points[:, [1, 0]]
+    points = points[:, [1, 0]]-1
     start_time = time.time()
     neighborhoods = neighbors.NearestNeighbors(n_neighbors=5, algorithm='kd_tree', leaf_size=10000)
     neighborhoods.fit(points.copy())
@@ -81,6 +81,8 @@ def create_density(points, density_map_rows, density_map_cols):
     for i in range(len(points)):
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
+        print(single_heat_map.shape)
+        print(point)
         single_heat_map[point[0]][point[1]] = 1
         # sigmas[i] = int(sigmas[i])
         sigma = sigmas[i].astype(np.int16)
@@ -134,13 +136,13 @@ if __name__ == '__main__':
         with open(json_path, 'r') as fr:
             json_points = json.load(open(json_path)).get('points')
         json_points = np.array(json_points, dtype=np.int)
-        if image_name == '1015.jpg':
-            json_points = json_points[:, [1, 0]]
+        # if image_name == '1015.jpg':
+        #     json_points = json_points[:, [1, 0]]
         # Because the coordinates of '1015.jpg' in NWPU data set is transposed
         print(cv_img.shape)
         density_map = create_density(json_points, cv_img.shape[0], cv_img.shape[1])
 
-        # np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
+        np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
 
         # show_img = cv2.cvtColor(density_map*255, cv2.COLOR_GRAY2RGB)
         # print(show_img.shape)
@@ -177,5 +179,5 @@ if __name__ == '__main__':
         data_set_info['mean_error'] = total_error / len(density_map_person_num_error.values())
         data_set_info['mean_detailed_error'] = total_detailed_error / len(density_map_person_num_error.values())
 
-        with open('mall_info.json', 'w') as fw:
+        with open(data_args.data_set_info, 'w') as fw:
             json.dump(data_set_info, fw)

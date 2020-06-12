@@ -151,7 +151,7 @@ if __name__ == '__main__':
         # if not image_name=='img_0315.jpg':
         #     continue
         with open(json_path, 'r') as fr:
-            json_points = json.load(open(json_path)).get('points')
+            json_points = json.load(fr).get('points')
         json_points = np.array(json_points, dtype=np.int)[:, [1, 0]]
         json_points[:, 0] = json_points[:, 0].clip(0, cv_img.shape[0] - 1)
         json_points[:, 1] = json_points[:, 1].clip(0, cv_img.shape[1] - 1)

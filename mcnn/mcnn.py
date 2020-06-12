@@ -8,7 +8,8 @@
 
 import torch.nn as nn
 import torch
-from .mcnn_model import MCNNModel
+from mcnn.mcnn_model import MCNNModel
+# from mcnn.mcnn_model import MCNNModel
 
 
 class MCNN(nn):
@@ -26,4 +27,3 @@ class MCNN(nn):
             self.mse_loss = self.get_loss(pre_density_map, gt_data)
         return pre_density_map
 
-    
