@@ -8,25 +8,28 @@
 import os
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFile
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class ShanghaiTechA:
-    def __init__(self, root, transforms):
+    def __init__(self, root, transforms=None):
         self.root = root
         self.transforms = transforms
         self.images = list(sorted(os.listdir(os.path.join(root, "images"))))
-        self.gt_density_maps = list(os.listdir(os.path.join(root, "npy")))
 
     def __getitem__(self, item):
+
         image = Image.open(os.path.join(self.root, "images", self.images[item])).convert("RGB")
-        gt_density_map_path = os.path.join(self.root, "images", self.gt_density_maps[item])
+        gt_density_map_path = os.path.join(self.root, "npy", self.images[item].replace('.jpg', '.npy'))
         if not os.path.exists(gt_density_map_path):
-            gt_density_map = np.zeros(shape=image.size())
+            gt_density_map = np.zeros(shape=image.size)
         else:
             gt_density_map = np.load(gt_density_map_path)
         if self.transforms is not None:
-            image, gt_density_map = self.transforms(image, gt_density_map)
+            image = self.transforms(image)
+            gt_density_map = self.transforms(gt_density_map).permute([0, 2, 1])
         return image, gt_density_map
 
     def __len__(self):
