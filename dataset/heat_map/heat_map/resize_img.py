@@ -30,4 +30,4 @@ for i in range(3, 6):
     new_image.paste(im, ((i - 3) * cut_size[0], cut_size[1]))
 
 new_image.show()
-new_image.save(os.path.join(path, 'outputImage.jpg'))
+new_image.save(os.path.join('/home/chase/datasets/crowd_counting/UCF_CC_50', 'outputImage.jpg'))

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/6/19 上午9:57
+# @Time    : 2020/6/23 上午8:53
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
 # @Software: PyCharm
@@ -23,13 +23,14 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Path configuration")
     parser.add_argument(
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/images',
+        default='/home/chase/datasets/crowd_counting/mall/frames',
         # default=None,
         type=str
     )
@@ -38,7 +39,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/json',
+        default='/home/chase/datasets/crowd_counting/mall/json',
         # default=None,
         type=str
     )
@@ -46,7 +47,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/npy',
+        default='/home/chase/datasets/crowd_counting/mall/npy_kernel_size_5_sigma',
         # default=None,
         type=str
     ),
@@ -54,12 +55,12 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/ShanghaiTechB_train_info.json',
+        default='/home/chase/datasets/crowd_counting/mall/mall_info.json',
         # default=None,
         type=str
     )
-
     return parser.parse_args()
+
 
 
 def create_density(points, density_map_rows, density_map_cols):

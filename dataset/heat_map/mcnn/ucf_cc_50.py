@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/6/19 上午9:57
+# @Time    : 2020/6/23 上午8:32
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
 # @Software: PyCharm
-
 
 import argparse
 import json
@@ -29,7 +28,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/images',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/images',
         # default=None,
         type=str
     )
@@ -38,7 +37,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/json',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/json',
         # default=None,
         type=str
     )
@@ -46,7 +45,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/npy',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/npy',
         # default=None,
         type=str
     ),
@@ -54,7 +53,7 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/ShanghaiTechB_train_info.json',
+        default='/home/chase/datasets/crowd_counting/UCF_CC_50/ucf_cc_50_info.json',
         # default=None,
         type=str
     )
