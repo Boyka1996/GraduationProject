@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/6/19 上午9:57
+# @Time    : 2020/6/22 下午9:13
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
 # @Software: PyCharm
@@ -46,7 +46,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/npy',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/npy_0.25',
         # default=None,
         type=str
     ),
@@ -54,7 +54,7 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/ShanghaiTechA_train_info.json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/ShanghaiTechA_train_info_0.25.json',
         # default=None,
         type=str
     )
@@ -70,12 +70,12 @@ def create_density(points, density_map_rows, density_map_cols):
     :param density_map_cols: width == cols
     :return:
     """
-    # density_map_rows, density_map_cols = int(density_map_rows / 4), int(density_map_cols / 4)
-    #
-    # points = np.array(points, dtype=np.float)[:, [1, 0]]
-    # points = points / 4
+    density_map_rows, density_map_cols = int(density_map_rows / 4), int(density_map_cols / 4)
 
     points = np.array(points, dtype=np.float)[:, [1, 0]]
+    points = points / 4
+
+    # points = np.array(points, dtype=np.float)[:, [1, 0]]
 
     density = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
 
