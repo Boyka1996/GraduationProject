@@ -29,7 +29,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/images',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/images',
         # default=None,
         type=str
     )
@@ -38,7 +38,7 @@ def parse_args():
         '--json_path',
         dest='json_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/json',
         # default=None,
         type=str
     )
@@ -46,7 +46,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/npy_0.25',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/npy_0.25',
         # default=None,
         type=str
     ),
@@ -54,7 +54,7 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/train_data/ShanghaiTechA_train_info_0.25.json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/ShanghaiTechB_train_info_0.25.json',
         # default=None,
         type=str
     )
@@ -70,7 +70,8 @@ def create_density(points, density_map_rows, density_map_cols):
     :param density_map_cols: width == cols
     :return:
     """
-    density_map_rows, density_map_cols = int(density_map_rows / 4), int(density_map_cols / 4)
+    # print(density_map_rows, density_map_cols )
+    density_map_rows, density_map_cols = density_map_rows // 4, density_map_cols // 4
 
     points = np.array(points, dtype=np.float)[:, [1, 0]]
     points = points / 4
@@ -86,22 +87,28 @@ def create_density(points, density_map_rows, density_map_cols):
     distances, neighborhood_id = neighborhoods.kneighbors()
 
     sigmas = distances.sum(axis=1) * 0.75
-    points = points.astype(np.int16)
+    points = np.floor(points).astype(np.int16)
+    # points = points.astype(np.int16)
     # sigmas=np.ceil(sigmas)
+    # print(density_map_rows, density_map_cols )
     for i in range(len(points)):
+
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
-        single_heat_map[point[0]][point[1]] = 1
+        single_heat_map[min(point[0], density_map_rows - 1)][min(point[1], density_map_cols - 1)] = 1
         sigma = int(sigmas[i])
         # Scale adaptive Gaussian kernel
         if sigma % 2 == 0:
             sigma += 1
             # print(sigma)
         radius = 5 * sigma
+
+        # Scope of Gaussian kernel
         row_min = max(0, point[0] - radius)
         row_max = min(point[0] + radius, density_map_rows)
         col_min = max(0, point[1] - radius)
         col_max = min(point[1] + radius, density_map_cols)
+
         single_heat_map = cv2.GaussianBlur(single_heat_map[row_min:row_max, col_min:col_max],
                                            ksize=(3 * sigma, 3 * sigma), sigmaX=sigma, sigmaY=sigma)
         density[row_min:row_max, col_min:col_max] += single_heat_map
@@ -109,7 +116,7 @@ def create_density(points, density_map_rows, density_map_cols):
     logger.info(time.time() - start_time)
     logger.info(len(points))
     logger.info(np.sum(density))
-    # plt.imshow(density)
+    plt.imshow(density)
     plt.show()
     logger.info("***********************************")
     return density
@@ -144,10 +151,7 @@ if __name__ == '__main__':
                      'detailed_density_map_person_num_error': detailed_density_map_person_num_error}
 
     for image_name, image_path in get_file_list(data_args.image_path):
-        # if not image_name == 'IMG_276.jpg':
-        #     continue
         logger.info(image_name)
-        # cv_img = Image.open(image_path)
         pil_img = Image.open(image_path).convert("RGB")
         cv_img = cv2.imread(image_path)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
@@ -156,14 +160,9 @@ if __name__ == '__main__':
 
         with open(json_path, 'r') as fr:
             json_points = json.load(fr).get('points')
-        # print(cv_img.shape)
-        # print(len(json_points))
         json_points = points_filter(json_points, pil_img.size[0], pil_img.size[1])
-        # print(len(json_points))
-        # print(pil_img.size)
-        plt.show()
-        density_map = create_density(json_points, pil_img.size[1], pil_img.size[0])
 
+        density_map = create_density(json_points, pil_img.size[1], pil_img.size[0])
         np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
 
         detailed_person_num = float(np.sum(density_map))

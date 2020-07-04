@@ -38,7 +38,7 @@ train_set = ShanghaiTechA('/home/chase/datasets/crowd_counting/ShanghaiTech/part
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=1, shuffle=False)
 
 test_set = ShanghaiTechA('/home/chase/datasets/crowd_counting/ShanghaiTech/part_A_final/test_data/', transform)
-test_loader = torch.utils.data.DataLoader(test_set, batch_size=4, shuffle=True, num_workers=4)
+test_loader = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=True, num_workers=4)
 '''train model'''
 
 
@@ -56,16 +56,21 @@ def train():
                           weight_decay=0.3)
     # train
     for epoch in range(start_epoch, end_epoch + 1):
+        print('Epoch {}/{}'.format(epoch, end_epoch-start_epoch))
         # --train epoch
+        train_loss=0.0
         for batch_idx, samples in enumerate(train_loader):
             optimizer.zero_grad()
             imgs, gt = samples
             imgs, gt = imgs.to(device), gt.to(device)
             output = model(imgs)
-            loss = criterion(my_filter(gt), output)
+            loss = criterion(gt, output)
+            # print(loss.item())
+            train_loss+=loss.item()
             loss.backward()
             optimizer.step()
         # --save model
+        print('Epoch {} loss: {}'.format(epoch,train_loss))
         if (epoch % 2 == 0) or (epoch == end_epoch):
             state_dict = {'epoch': epoch,
                           'model': model.state_dict(),

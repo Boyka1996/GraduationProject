@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-# @Time    : 2020/6/23 上午8:53
+# @Time    : 2020/6/23 上午9:39
 # @Author  : Boyka
 # @Email   : upcvagen@163.com
 # @Software: PyCharm
-
 
 import argparse
 import json
@@ -47,7 +46,7 @@ def parse_args():
         '--npy_path',
         dest='npy_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/mall/npy_kernel_size_5_sigma',
+        default='/home/chase/datasets/crowd_counting/mall/npy_0.25_kernel_size_5_sigma',
         # default=None,
         type=str
     ),
@@ -55,12 +54,11 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/mall/mall_info.json',
+        default='/home/chase/datasets/crowd_counting/mall/mall_0.25_info.json',
         # default=None,
         type=str
     )
     return parser.parse_args()
-
 
 
 def create_density(points, density_map_rows, density_map_cols):
@@ -71,12 +69,13 @@ def create_density(points, density_map_rows, density_map_cols):
     :param density_map_cols: width == cols
     :return:
     """
-    # density_map_rows, density_map_cols = int(density_map_rows / 4), int(density_map_cols / 4)
-    #
-    # points = np.array(points, dtype=np.float)[:, [1, 0]]
-    # points = points / 4
+    # print(density_map_rows, density_map_cols )
+    density_map_rows, density_map_cols = int(density_map_rows / 4), int(density_map_cols / 4)
 
     points = np.array(points, dtype=np.float)[:, [1, 0]]
+    points = points / 4
+
+    # points = np.array(points, dtype=np.float)[:, [1, 0]]
 
     density = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
 
@@ -87,12 +86,15 @@ def create_density(points, density_map_rows, density_map_cols):
     distances, neighborhood_id = neighborhoods.kneighbors()
 
     sigmas = distances.sum(axis=1) * 0.75
-    points = points.astype(np.int16)
+    points=np.floor(points).astype(np.int16)
+    # points = points.astype(np.int16)
     # sigmas=np.ceil(sigmas)
+    # print(density_map_rows, density_map_cols )
     for i in range(len(points)):
+
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
-        single_heat_map[point[0]][point[1]] = 1
+        single_heat_map[min(point[0],density_map_rows-1)][min(point[1],density_map_cols-1)] = 1
         sigma = int(sigmas[i])
         # Scale adaptive Gaussian kernel
         if sigma % 2 == 0:
