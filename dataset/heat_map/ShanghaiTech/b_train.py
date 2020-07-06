@@ -16,10 +16,7 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy
 from sklearn import neighbors
-
-from mcnn import utils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -56,7 +53,8 @@ def parse_args():
         '--data_set_info',
         dest='data_set_info',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/ShanghaiTechB_train_info_0.25.json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/'
+                'train_data/ShanghaiTechB_train_info_0.25.json',
         # default=None,
         type=str
     )
@@ -64,50 +62,10 @@ def parse_args():
     return parser.parse_args()
 
 
-# gauss kernel
-def gen_gauss_kernels(kernel_size=15, sigma=4):
-    kernel_shape = (kernel_size, kernel_size)
-    kernel_center = (kernel_size // 2, kernel_size // 2)
-
-    arr = np.zeros(kernel_shape).astype(float)
-    arr[kernel_center] = 1
-
-    arr = scipy.ndimage.filters.gaussian_filter(arr, sigma, mode='constant')
-    kernel = arr / arr.sum()
-    return kernel
-
-
-def gaussian_filter_density(non_zero_points, map_h, map_w):
-    """
-    Fast gaussian filter implementation : using precomputed distances and kernels
-    """
-    gt_count = non_zero_points.shape[0]
-    density_map = np.zeros((map_h, map_w), dtype=np.float32)
-
-    for i in range(gt_count):
-        point_y, point_x = non_zero_points[i]
-        # print(point_x, point_y)
-        kernel_size = 15 // 2
-        kernel = gen_gauss_kernels(kernel_size * 2 + 1, 4)
-        min_img_x = int(max(0, point_x - kernel_size))
-        min_img_y = int(max(0, point_y - kernel_size))
-        max_img_x = int(min(point_x + kernel_size + 1, map_h - 1))
-        max_img_y = int(min(point_y + kernel_size + 1, map_w - 1))
-        # print(min_img_x, min_img_y, max_img_x, max_img_y)
-        kernel_x_min = int(kernel_size - point_x if point_x <= kernel_size else 0)
-        kernel_y_min = int(kernel_size - point_y if point_y <= kernel_size else 0)
-        kernel_x_max = int(kernel_x_min + max_img_x - min_img_x)
-        kernel_y_max = int(kernel_y_min + max_img_y - min_img_y)
-        # print(kernel_x_max, kernel_x_min, kernel_y_max, kernel_y_min)
-
-        density_map[min_img_x:max_img_x, min_img_y:max_img_y] += kernel[kernel_x_min:kernel_x_max,
-                                                                 kernel_y_min:kernel_y_max]
-    return density_map
-
-
 def create_density(img, points, density_map_rows, density_map_cols):
     """
 
+    :param img:
     :param points: (x,y) == (col_id,row_id)
     :param density_map_rows: height == rows
     :param density_map_cols: width == cols
@@ -136,24 +94,23 @@ def create_density(img, points, density_map_rows, density_map_cols):
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
         single_heat_map[min(point[0], density_map_rows - 1)][min(point[1], density_map_cols - 1)] = 1
-        sigma = int(sigmas[i])
-        # Scale adaptive Gaussian kernel
-        if sigma % 2 == 0:
-            sigma += 1
-            # print(sigma)
-        radius = 4 * sigma
+        sigma = max(0.8, sigmas[i])
+        radius = 5 * sigma
 
         # Scope of Gaussian kernel
-        row_min = max(0, point[0] - radius)
-        row_max = min(point[0] + radius, density_map_rows)
-        col_min = max(0, point[1] - radius)
-        col_max = min(point[1] + radius, density_map_cols)
+        row_min = int(max(0, point[0] - radius))
+        row_max = int(min(point[0] + radius, density_map_rows))
+        col_min = int(max(0, point[1] - radius))
+        col_max = int(min(point[1] + radius, density_map_cols))
         # ksize – Aperture size. It should be odd ( ksize mod 2 = 1 ) and positive.
         # sigma – Gaussian standard deviation.
         # If it is non-positive, it is computed from ksize as sigma = 0.3*((ksize-1)*0.5 - 1) + 0.8 .
         # ktype – Type of filter coefficients. It can be CV_32f or CV_64F
+        # print(sigma)
+        ksize = int(((sigma - 0.8) / 3 * 10 + 1)) * 2 + 1
+        # print(ksize)
         single_heat_map = cv2.GaussianBlur(single_heat_map[row_min:row_max, col_min:col_max],
-                                           ksize=(3 * sigma, 3 * sigma), sigmaX=sigma, sigmaY=sigma)
+                                           ksize=(ksize, ksize), sigmaX=0)
         # plt.imshow(single_heat_map)
         # plt.show()
         density[row_min:row_max, col_min:col_max] += single_heat_map
@@ -165,8 +122,8 @@ def create_density(img, points, density_map_rows, density_map_cols):
     # plt.show()
     # utils.show_desity_map(density)
     logger.info("***********************************")
-    print(density.shape, img.shape)
-    utils.show_density_image(density, img)
+    # print(density.shape, img.shape)
+    # utils.show_density_image(density, img)
     return density
 
 
@@ -198,8 +155,8 @@ if __name__ == '__main__':
             json_points = json.load(fr).get('points')
         plt.show()
         density_map = create_density(cv_img, np.array(json_points), cv_img.shape[0], cv_img.shape[1])
-        plt.imshow(density_map)
-        plt.show()
+        # plt.imshow(density_map)
+        # plt.show()
 
         np.save(os.path.join(data_args.npy_path, image_name.replace('.jpg', '.npy')), density_map)
 
