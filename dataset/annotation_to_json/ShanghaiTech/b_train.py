@@ -23,7 +23,7 @@ def parse_args():
         '--image_path',
         dest='image_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/test_data/images',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/images',
         # default=None,
         type=str
     )
@@ -31,7 +31,7 @@ def parse_args():
         '--mat_path',
         dest='mat_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/test_data/ground_truth',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/ground_truth',
         # default=None,
         type=str
     )
@@ -39,7 +39,7 @@ def parse_args():
         '--save_path',
         dest='save_path',
         help='',
-        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/test_data/json',
+        default='/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/json',
         # default=None,
         type=str
     )

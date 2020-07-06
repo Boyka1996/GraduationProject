@@ -116,7 +116,7 @@ def create_density(points, density_map_rows, density_map_cols):
     density_map_rows, density_map_cols = density_map_rows // 4, density_map_cols // 4
 
     points = np.array(points, dtype=np.float)[:, [1, 0]]
-    points = points / 4
+    points = points // 4
 
     # points = np.array(points, dtype=np.float)[:, [1, 0]]
 
@@ -137,7 +137,11 @@ def create_density(points, density_map_rows, density_map_cols):
 
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
+        plt.imshow(single_heat_map)
+        plt.show()
         single_heat_map[min(point[0], density_map_rows - 1)][min(point[1], density_map_cols - 1)] = 1
+        plt.imshow(single_heat_map)
+        plt.show()
         sigma = int(sigmas[i])
         # Scale adaptive Gaussian kernel
         if sigma % 2 == 0:
@@ -153,7 +157,9 @@ def create_density(points, density_map_rows, density_map_cols):
 
         single_heat_map = cv2.GaussianBlur(single_heat_map[row_min:row_max, col_min:col_max],
                                            ksize=(3 * sigma, 3 * sigma), sigmaX=sigma, sigmaY=sigma)
-        density[row_min:row_max, col_min:col_max] += single_heat_map
+        plt.imshow(single_heat_map)
+        plt.show()
+        density[row_min:row_max, col_min:col_max] += single_heat_map[row_min:row_max, col_min:col_max]
     logger.info("***********************************")
     logger.info(time.time() - start_time)
     logger.info(len(points))
@@ -166,16 +172,6 @@ def create_density(points, density_map_rows, density_map_cols):
 
 def get_file_list(file_path):
     return zip(os.listdir(file_path), [os.path.join(file_path, file) for file in os.listdir(file_path)])
-
-
-def points_filter(points, width, height):
-    filtered_points = []
-    for point in points:
-        if point[0] < width and point[1] < height:
-            filtered_points.append(point)
-        else:
-            print(point)
-    return filtered_points
 
 
 if __name__ == '__main__':
@@ -193,27 +189,18 @@ if __name__ == '__main__':
                      'detailed_density_map_person_num_error': detailed_density_map_person_num_error}
 
     for image_name, image_path in get_file_list(data_args.image_path):
-        # if not image_name == 'IMG_276.jpg':
-        #     continue
         logger.info(image_name)
-        # cv_img = Image.open(image_path)
         pil_img = Image.open(image_path).convert("RGB")
         cv_img = cv2.imread(image_path)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         if not os.path.exists(json_path):
             continue
-
         with open(json_path, 'r') as fr:
             json_points = json.load(fr).get('points')
-        # print(cv_img.shape)
-        # print(len(json_points))
-        json_points = points_filter(json_points, pil_img.size[0], pil_img.size[1])
-        # print(len(json_points))
-        # print(pil_img.size)
         plt.show()
-        json_points=np.array(json_points)
-        density_map=gaussian_filter_density(json_points, pil_img.size[1], pil_img.size[0])
-        # density_map = create_density(json_points, pil_img.size[1], pil_img.size[0])
+        # json_points = np.array(json_points)
+        # density_map=gaussian_filter_density(json_points, pil_img.size[1], pil_img.size[0])
+        density_map = create_density(np.array(json_points), pil_img.size[1], pil_img.size[0])
         plt.imshow(density_map)
         plt.show()
 
