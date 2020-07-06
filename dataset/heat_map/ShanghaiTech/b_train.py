@@ -17,8 +17,9 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from PIL import Image
 from sklearn import neighbors
+
+from mcnn import utils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -104,7 +105,7 @@ def gaussian_filter_density(non_zero_points, map_h, map_w):
     return density_map
 
 
-def create_density(points, density_map_rows, density_map_cols):
+def create_density(img, points, density_map_rows, density_map_cols):
     """
 
     :param points: (x,y) == (col_id,row_id)
@@ -112,61 +113,60 @@ def create_density(points, density_map_rows, density_map_cols):
     :param density_map_cols: width == cols
     :return:
     """
-    # print(density_map_rows, density_map_cols )
-    density_map_rows, density_map_cols = density_map_rows // 4, density_map_cols // 4
+    # Resize points and density map
 
+    density_map_rows, density_map_cols = density_map_rows // 4, density_map_cols // 4
     points = np.array(points, dtype=np.float)[:, [1, 0]]
     points = points // 4
-
-    # points = np.array(points, dtype=np.float)[:, [1, 0]]
+    img = cv2.resize(img, (density_map_cols, density_map_rows))
 
     density = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
 
     start_time = time.time()
 
-    neighborhoods = neighbors.NearestNeighbors(n_neighbors=4, algorithm='kd_tree', leaf_size=1200)
+    # Get the k-th nearest points
+    neighborhoods = neighbors.NearestNeighbors(n_neighbors=5, algorithm='kd_tree', leaf_size=1200)
     neighborhoods.fit(points.copy())
     distances, neighborhood_id = neighborhoods.kneighbors()
 
-    sigmas = distances.sum(axis=1) * 0.75
+    sigmas = distances.sum(axis=1) * 0.2 * 0.3 / 3
     points = np.floor(points).astype(np.int16)
-    # points = points.astype(np.int16)
-    # sigmas=np.ceil(sigmas)
-    # print(density_map_rows, density_map_cols )
-    for i in range(len(points)):
 
+    for i in range(len(points)):
         point = points[i]
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
-        plt.imshow(single_heat_map)
-        plt.show()
         single_heat_map[min(point[0], density_map_rows - 1)][min(point[1], density_map_cols - 1)] = 1
-        plt.imshow(single_heat_map)
-        plt.show()
         sigma = int(sigmas[i])
         # Scale adaptive Gaussian kernel
         if sigma % 2 == 0:
             sigma += 1
             # print(sigma)
-        radius = 5 * sigma
+        radius = 4 * sigma
 
         # Scope of Gaussian kernel
         row_min = max(0, point[0] - radius)
         row_max = min(point[0] + radius, density_map_rows)
         col_min = max(0, point[1] - radius)
         col_max = min(point[1] + radius, density_map_cols)
-
+        # ksize – Aperture size. It should be odd ( ksize mod 2 = 1 ) and positive.
+        # sigma – Gaussian standard deviation.
+        # If it is non-positive, it is computed from ksize as sigma = 0.3*((ksize-1)*0.5 - 1) + 0.8 .
+        # ktype – Type of filter coefficients. It can be CV_32f or CV_64F
         single_heat_map = cv2.GaussianBlur(single_heat_map[row_min:row_max, col_min:col_max],
                                            ksize=(3 * sigma, 3 * sigma), sigmaX=sigma, sigmaY=sigma)
-        plt.imshow(single_heat_map)
-        plt.show()
-        density[row_min:row_max, col_min:col_max] += single_heat_map[row_min:row_max, col_min:col_max]
+        # plt.imshow(single_heat_map)
+        # plt.show()
+        density[row_min:row_max, col_min:col_max] += single_heat_map
     logger.info("***********************************")
     logger.info(time.time() - start_time)
     logger.info(len(points))
     logger.info(np.sum(density))
-    plt.imshow(density)
-    plt.show()
+    # plt.imshow(density)
+    # plt.show()
+    # utils.show_desity_map(density)
     logger.info("***********************************")
+    print(density.shape, img.shape)
+    utils.show_density_image(density, img)
     return density
 
 
@@ -190,7 +190,6 @@ if __name__ == '__main__':
 
     for image_name, image_path in get_file_list(data_args.image_path):
         logger.info(image_name)
-        pil_img = Image.open(image_path).convert("RGB")
         cv_img = cv2.imread(image_path)
         json_path = os.path.join(data_args.json_path, image_name.replace('.jpg', '.json'))
         if not os.path.exists(json_path):
@@ -198,9 +197,7 @@ if __name__ == '__main__':
         with open(json_path, 'r') as fr:
             json_points = json.load(fr).get('points')
         plt.show()
-        # json_points = np.array(json_points)
-        # density_map=gaussian_filter_density(json_points, pil_img.size[1], pil_img.size[0])
-        density_map = create_density(np.array(json_points), pil_img.size[1], pil_img.size[0])
+        density_map = create_density(cv_img, np.array(json_points), cv_img.shape[0], cv_img.shape[1])
         plt.imshow(density_map)
         plt.show()
 

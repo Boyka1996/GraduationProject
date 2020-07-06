@@ -8,4 +8,7 @@
 import utils
 import numpy as np
 density_map=np.load('/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/npy/IMG_5.npy')
-utils.show_desity_map(density_map)
+# utils.show_desity_map(density_map)
+a=np.zeros(shape=(3,4,5))
+a=np.swapaxes(a,0,2)
+print(a.shape)
