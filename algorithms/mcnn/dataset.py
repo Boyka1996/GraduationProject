@@ -30,8 +30,6 @@ class ShanghaiTechA:
         if self.transforms is not None:
             image = self.transforms(image)
             gt_density_map = self.transforms(gt_density_map)
-            # print(image.shape)
-            # print(gt_density_map.shape)
         return image, gt_density_map
 
     def __len__(self):

@@ -29,8 +29,9 @@ def show_density_image(density_map, image):
 
 
 def show_desity_map(density_map):
-    density_map = 255 * density_map / np.max(density_map)
+    density_map = 1000 * density_map / np.max(density_map)
     plt.imshow(density_map)
+    plt.savefig('1.png')
     plt.show()
     # cv2.imshow('',density_map)
     # cv2.waitKey()
@@ -68,3 +69,5 @@ def display_results(input_img, gt_data, density_map):
     result_img = result_img.astype(np.uint8, copy=False)
     cv2.imshow('Result', result_img)
     cv2.waitKey(0)
+dens=np.load('/home/chase/datasets/crowd_counting/ShanghaiTech/part_B_final/train_data/npy_0.25/IMG_4.npy')
+show_desity_map(dens)

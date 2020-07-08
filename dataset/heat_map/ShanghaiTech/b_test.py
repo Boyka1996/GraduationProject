@@ -85,7 +85,7 @@ def create_density(img, points, density_map_rows, density_map_cols):
     neighborhoods.fit(points.copy())
     distances, neighborhood_id = neighborhoods.kneighbors()
 
-    sigmas = distances.sum(axis=1) * 0.2 * 0.3 / 3
+    sigmas = distances.sum(axis=1) * 0.2 * 0.3
     points = np.floor(points).astype(np.int16)
 
     for i in range(len(points)):
@@ -93,7 +93,7 @@ def create_density(img, points, density_map_rows, density_map_cols):
         single_heat_map = np.zeros(shape=(density_map_rows, density_map_cols), dtype=np.float32)
         single_heat_map[min(point[0], density_map_rows - 1)][min(point[1], density_map_cols - 1)] = 1
         sigma = max(0.8, sigmas[i])
-        radius = 5 * sigma
+        radius = 50 * sigma
 
         # Scope of Gaussian kernel
         row_min = int(max(0, point[0] - radius))
