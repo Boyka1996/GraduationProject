@@ -86,7 +86,6 @@ def train():
                 running_mse += 0
             epoch_loss = running_loss.item() / data_set_sizes[phase]
             epoch_mae = running_mae.item() / data_set_sizes[phase]
-            # epoch_mse = running_mse.item() / data_set_sizes[phase]
             epoch_mse = pow(running_mse / data_set_sizes[phase], 0.5).item()
             print('{} Loss: {} MAE: {} MSE: {}'.format(phase, epoch_loss, epoch_mae, epoch_mse))
 
