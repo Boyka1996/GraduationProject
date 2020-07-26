@@ -72,6 +72,7 @@ class Solution:
                     if_started = True
                 else:
                     result = result * 10 + int(c)
+                    if_started = True
             else:
                 if c.isdigit():
                     result = result * 10 + int(c)
@@ -83,4 +84,4 @@ class Solution:
 
 if __name__ == '__main__':
     solution = Solution()
-    print(solution.myAtoi("   +0 123"))
+    print(solution.myAtoi("0-1"))
