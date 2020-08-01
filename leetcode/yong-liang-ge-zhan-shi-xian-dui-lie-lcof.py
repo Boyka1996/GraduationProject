@@ -5,6 +5,8 @@
 # @Email   : upcvagen@163.com
 # @Software: PyCharm
 
+
+
 class CQueue:
     def __init__(self):
         self.in_stack = []
