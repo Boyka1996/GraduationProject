@@ -25,6 +25,5 @@ def str2int(s):
             num = num * 10 + int(element)
     return result_list
 if __name__ == '__main__':
-    s="(1-(3-4))"
-    s="1000"
-    print(str2int(s))
+    a=[1,2,3]
+    print(a[::-1])
