@@ -7,6 +7,7 @@ from sklearn.metrics import r2_score
 #np.random.seed(0)
 # x = np.random.randn(80, 2)
 # y = x[:, 0] + 2*x[:, 1] + np.random.randn(80)
+
 df = pd.read_table("ARRAY LATEROLOG.TXT",header=None,sep=r'\s{2,}',engine='python')#利用正则表达式处理txt的空格，并设置python解释正则
 x1 = df.iloc[0:,0]
 y1 = df.iloc[0:,2]
