@@ -8,13 +8,9 @@
 @Project    : GraduationProject
 @Description:
 """
-import cv2
-img=cv2.imread('1.jpg')
-print(img.shape)
-img=img[300:img.shape[0]-300]
-print(img.shape)
-out=cv2.resize(img,(150,200))
-cv2.imwrite('2.jpg',out)
-cv2.imshow('1',out)
-cv2.waitKey()
-print(out.shape)
+a = 175 + 24 + 39 + 11 + 25 + 77 + 12 + 13 + 87 + 10 + 10 + 71 + 19 + 15 + 31 + 17 + 35 + 30 + 26 + 11 + 12 + 21 + 17 + 23 + 64 + 20 + 19 + 20 + 16
+a = 21 + 30 + 19 + 17 + 23 + 20 + 20 + 16 + 96 + 64
+b = 15 + 10 + 175 + 35 + 17 + 31 + 12 + 19 + 71 + 25
+c = 18 + 11 + 24 + 39 + 11 + 12 + 77 + 87 + 10 + 13
+
+print(a+b+c)
